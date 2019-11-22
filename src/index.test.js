@@ -425,6 +425,82 @@ describe("links", () => {
     });
   });
 
+  it("passes to getProps jcorrect values of isCurrent and isPartiallyCurrent", done => {
+    const testSource = createMemorySource("/reports/a");
+    const testHistory = createHistory(testSource);
+    let div = document.createElement("div");
+    let current;
+    let partiallyCurrent;
+    const getPropsIsCurrentLink = ({ isCurrent, isPartiallyCurrent }) => {
+      current = isCurrent;
+      partiallyCurrent = isPartiallyCurrent;
+    };
+
+    let current1;
+    let partiallyCurrent1;
+    const getPropsIsPartiallyCurrentLink = ({
+      isCurrent,
+      isPartiallyCurrent
+    }) => {
+      current1 = isCurrent;
+      partiallyCurrent1 = isPartiallyCurrent;
+    };
+    ReactDOM.render(
+      <LocationProvider history={testHistory}>
+        <Link to="/reports" getProps={getPropsIsPartiallyCurrentLink} />
+        <Link to="/reports/a" getProps={getPropsIsCurrentLink} />
+      </LocationProvider>,
+      div,
+      () => {
+        expect(current).toBe(true);
+        expect(partiallyCurrent).toBe(true);
+        expect(current1).toBe(false);
+        expect(partiallyCurrent1).toBe(true);
+        ReactDOM.unmountComponentAtNode(div);
+        done();
+      }
+    );
+  });
+
+  it("passes to getProps correct values of isCurrent and isPartiallyCurrent, when URL contains special characters", done => {
+    const testSource = createMemorySource(
+      encodeURIComponent("/vivacità/felicità")
+    );
+    const testHistory = createHistory(testSource);
+    let div = document.createElement("div");
+    let current;
+    let partiallyCurrent;
+    const getPropsIsCurrentLink = ({ isCurrent, isPartiallyCurrent }) => {
+      current = isCurrent;
+      partiallyCurrent = isPartiallyCurrent;
+    };
+
+    let current1;
+    let partiallyCurrent1;
+    const getPropsIsPartiallyCurrentLink = ({
+      isCurrent,
+      isPartiallyCurrent
+    }) => {
+      current1 = isCurrent;
+      partiallyCurrent1 = isPartiallyCurrent;
+    };
+    ReactDOM.render(
+      <LocationProvider history={testHistory}>
+        <Link to="/vivacità" getProps={getPropsIsPartiallyCurrentLink} />
+        <Link to="/vivacità/felicità" getProps={getPropsIsCurrentLink} />
+      </LocationProvider>,
+      div,
+      () => {
+        expect(current).toBe(true);
+        expect(partiallyCurrent).toBe(true);
+        expect(current1).toBe(false);
+        expect(partiallyCurrent1).toBe(true);
+        ReactDOM.unmountComponentAtNode(div);
+        done();
+      }
+    );
+  });
+
   it("renders links with relative hrefs", () => {
     const Parent = ({ children }) => (
       <div>
